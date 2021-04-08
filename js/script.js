@@ -79,11 +79,9 @@ stringsController = {
       var isChecked = elem.classList.contains("checked");
       if (isActive || isChecked) {
         stringsController.clearLeftActive(elem);
-        stringsController.showData();
         return true;
       }
       stringsController.setLeftActive(elem);
-      stringsController.showData();
     });
     return true;
   },
@@ -290,7 +288,6 @@ stringsController = {
       this.markString(string, isCorrect);
       mistake = isCorrect ? (mistake += 0) : (mistake += 1);
     }
-    console.log(mistake);
     text.textContent = mistake === 0 ? "Правильно!" : "Неправильно!";
   },
   markString: function (string, mark) {
@@ -318,7 +315,6 @@ stringsController = {
     this.saveCorrectValue();
     this.reWriteId();
     this.setToggle();
-    this.showData();
   },
   reload: function () {
     this.clearAllData();
@@ -334,7 +330,6 @@ stringsController = {
     close.style = "";
     var text = document.querySelector(".text");
     text.textContent = "Результат";
-    this.showData();
   },
 };
 
