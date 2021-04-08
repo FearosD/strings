@@ -327,7 +327,7 @@ stringsController = {
       this.behaviorActiveRightColumn(rightElem);
     }
     var close = document.querySelector(".close");
-    close.style = "";
+    close.style.display = "none";
     var text = document.querySelector(".text");
     text.textContent = "Результат";
   },
