@@ -78,6 +78,7 @@ svg {
   border-radius: 50%;
   background: black;
   position: absolute;
+  top: calc(50% - 5px);
 }
 
 .left-point {
@@ -86,7 +87,6 @@ svg {
 
 .right-point {
   left: -15px;
-  top: calc(50% - 5px);
 }
 
 /*-----------*/
