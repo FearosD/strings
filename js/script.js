@@ -41,11 +41,27 @@ function MimicPlayer() {
 var player = parent.GetPlayer ? parent.GetPlayer() : new MimicPlayer();
 
 stringsController = {
-  dataString: [
-    { id: 1, currentRight: "", correctRight: "", isCorrecrt: false },
-    { id: 2, currentRight: "", correctRight: "", isCorrecrt: false },
-  ],
+  dataString: [{ id: 1, currentRight: "", correctRight: "", isCorrect: false }],
   activeElem: "",
+  startElem: {},
+  initData: function () {
+    var leftElems = document.querySelectorAll(".left-column .zone");
+    var currentLength = this.dataString.length;
+    if (currentLength === leftElems.length) return false;
+    var countIndexStrings = leftElems.length + 1;
+    for (var i = 2; i < countIndexStrings; i += 1) {
+      var string = {
+        id: i,
+        currentRight: "",
+        correctRight: "",
+        isCorrect: false,
+      };
+      this.dataString.push(string);
+    }
+    var rightColumn = document.querySelector(".right-column");
+    var cloneNode = rightColumn.cloneNode(true);
+    this.startElem = cloneNode;
+  },
   showData: function () {
     console.log(this.dataString);
   },
@@ -116,10 +132,10 @@ stringsController = {
     return false;
   },
   clearCheked: function (string) {
-    var lineId = 'line_'+ string["id"];
-    var svg = document.querySelector('svg');
-    var line = document.querySelector("#"+lineId);
-    svg.removeChild(line);
+    var lineId = "line_" + string["id"];
+    var svg = document.querySelector("svg");
+    var line = document.querySelector("#" + lineId);
+    if (line) svg.removeChild(line);
     var leftId = "l" + string["id"];
     var rightId = string["currentRight"];
     var leftElem = document.querySelector("#" + leftId);
@@ -127,7 +143,7 @@ stringsController = {
     leftElem.classList.remove("checked");
     rightElem.classList.remove("checked");
     string["currentRight"] = "";
-    string["isCorrecrt"] = false;
+    string["isCorrect"] = false;
   },
   setChecked: function (leftElem, rightElem) {
     this.removeActiveClass();
@@ -137,10 +153,10 @@ stringsController = {
     rightElem.classList.add("checked");
   },
   checkCorrect: function (string) {
-    var current = string['currentRight'];
-    var correct = string['correctRight'];
+    var current = string["currentRight"];
+    var correct = string["correctRight"];
     var isCorrect = current === correct;
-    string['isCorrecrt'] = isCorrect;
+    string["isCorrect"] = isCorrect;
   },
   toggleDisRightColumn: function () {
     var isActive = this.activeElem;
@@ -195,12 +211,12 @@ stringsController = {
     cloneLine.setAttribute("y1", y1);
     cloneLine.setAttribute("y2", y2);
     cloneLine.setAttribute("id", idLine);
-    var svg = document.querySelector('svg');
+    var svg = document.querySelector("svg");
     svg.appendChild(cloneLine);
   },
   shuffleRightColumn: function () {
     var rightColumn = document.querySelector(".right-column");
-    var cloneNode = rightColumn.cloneNode(true);
+    var cloneNode = this.startElem.cloneNode(true);
     var cloneElems = cloneNode.querySelectorAll(".zone");
     var tempArr = [];
     for (var i = 0; i < cloneElems.length; i += 1) {
@@ -242,11 +258,83 @@ stringsController = {
       point.setAttribute("id", idPoint);
     }
   },
+  clearAllData: function () {
+    var strings = this.dataString;
+    for (var i = 0; i < strings.length; i += 1) {
+      var string = strings[i];
+      string["correctRight"] = "";
+      string["currentRight"] = "";
+      string["isCorrect"] = false;
+    }
+    var leftElems = document.querySelectorAll(".left-column .zone");
+    for (var i = 0; i < leftElems.length; i += 1) {
+      var leftElem = leftElems[i];
+      leftElem.classList.remove("checked");
+      leftElem.classList.remove("active");
+      leftElem.classList.remove("bad");
+      leftElem.classList.remove("good");
+    }
+    this.toggleDisRightColumn();
+    var svg = document.querySelector("svg");
+    while (svg.childNodes.length > 2) {
+      svg.removeChild(svg.lastChild);
+    }
+  },
+  checkCorrectQuestion: function () {
+    var strings = this.dataString;
+    var text = document.querySelector(".text");
+    var mistake = 0;
+    for (var i = 0; i < strings.length; i += 1) {
+      var string = strings[i];
+      var isCorrect = string["isCorrect"];
+      this.markString(string, isCorrect);
+      mistake = isCorrect ? (mistake += 0) : (mistake += 1);
+    }
+    console.log(mistake);
+    text.textContent = mistake === 0 ? "Правильно!" : "Неправильно!";
+  },
+  markString: function (string, mark) {
+    var lineId = "line_" + string["id"];
+    var line = document.querySelector("#" + lineId);
+    var leftId = "l" + string["id"];
+    var rightId = string["currentRight"];
+    var leftElem = document.querySelector("#" + leftId);
+    var rightElem = document.querySelector("#" + rightId);
+    if (mark) {
+      leftElem.classList.add("good");
+      rightElem.classList.add("good");
+      line.setAttribute("stroke", "#164612");
+    } else {
+      leftElem.classList.add("bad");
+      rightElem.classList.add("bad");
+      line.setAttribute("stroke", "#971212");
+    }
+    var close = document.querySelector(".close");
+    close.style.display = "block";
+  },
   init: function () {
+    this.initData();
     this.shuffleRightColumn();
     this.saveCorrectValue();
     this.reWriteId();
     this.setToggle();
+    this.showData();
+  },
+  reload: function () {
+    this.clearAllData();
+    this.shuffleRightColumn();
+    this.saveCorrectValue();
+    this.reWriteId();
+    var rightElems = document.querySelectorAll(".right-column .zone");
+    for (var i = 0; i < rightElems.length; i += 1) {
+      var rightElem = rightElems[i];
+      this.behaviorActiveRightColumn(rightElem);
+    }
+    var close = document.querySelector(".close");
+    close.style = "";
+    var text = document.querySelector(".text");
+    text.textContent = "Результат";
+    this.showData();
   },
 };
 

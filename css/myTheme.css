@@ -31,12 +31,13 @@ outline: 1px solid tomato;
 display:flex;
 flex-direction: column;
 justify-content: space-around;
-height:200px;
+padding:20px;
 }
 
 .zone {
   width: 80px;
   height: 80px;
+  margin:10px 0px;
   background: lightblue;
   display: flex;
   align-items: center;
@@ -83,4 +84,52 @@ height:200px;
 
 .right-point {
   left: -15px;
+}
+
+
+/*-----------*/
+
+.buttons {
+  width:800px;
+  box-sizing: border-box;
+  outline: 1px solid tomato;
+  padding:20px;
+  display:flex;
+  justify-content: space-around;
+}
+
+.answer, .reload {
+  padding: 18px 27px;
+  background: lightblue;
+  cursor: pointer;
+}
+
+.answer:hover, .reload:hover {
+  background: #85a9b5;
+}
+
+.text {
+  width:800px;
+  text-align: center;
+  padding-top:20px;
+  font-size: 24px;
+}
+
+.bad {
+  background: #971212 !important;
+}
+
+.good {
+  background: #164612 !important;
+}
+
+.close {
+  position: absolute;
+  top:0;
+  left:0;
+  width:800px;
+  height:480px;
+  z-index: 2;
+  user-select: none;
+  display: none;
 }

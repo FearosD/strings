@@ -13,7 +13,7 @@
 	<svg style='position:absolute' width='100%' height='100%'>
 		<line class='line-svg' x1="0" y1="0" x2="0" y2="0" stroke="tomato" stroke-width="3" stroke-dasharray="6" />
 	</svg>
-
+<div class="close"></div>
 	<div class="cont">
 		<div class="left-column">
 			<div class="zone" id='l1'>1
@@ -21,6 +21,12 @@
 			</div>
 			<div class="zone" id='l2'>2
 				<div id='l-p2' class="point left-point"></div>
+			</div>
+			<div class="zone" id='l3'>3
+				<div id='l-p3' class="point left-point"></div>
+			</div>
+			<div class="zone" id='l4'>4
+				<div id='l-p4' class="point left-point"></div>
 			</div>
 		</div>
 		<div class="right-column">
@@ -30,10 +36,19 @@
 			<div class="zone disable" id='r2'>2
 				<div id='r-p2' class="point right-point"></div>
 			</div>
+			<div class="zone disable" id='r3'>3
+				<div id='r-p3' class="point right-point"></div>
+			</div>
+			<div class="zone disable" id='r4'>4
+				<div id='r-p4' class="point right-point"></div>
+			</div>
 		</div>
-
-
 	</div>
+	<div class="buttons">
+		<div class="answer" onclick="stringsController.checkCorrectQuestion()">Ответить</div>
+		<div class="reload" onclick="stringsController.reload()">Обновить</div>
+	</div>
+	<div class="text">Результат</div>
 	<script src="js/script.js"></script>
 </body>
 
