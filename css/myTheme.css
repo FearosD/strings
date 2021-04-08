@@ -59,6 +59,16 @@ height:200px;
   background: lightblue;
 }
 
+.checked {
+  background: #41a55f;
+}
+
+.zone.disable.checked,  .zone.disable.checked:hover{
+  background: #41a55f;
+  user-select: none;
+  cursor: default;
+}
+
 .point {
   height: 10px;
   width: 10px;

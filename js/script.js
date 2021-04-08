@@ -39,43 +39,11 @@ function MimicPlayer() {
 }
 
 var player = parent.GetPlayer ? parent.GetPlayer() : new MimicPlayer();
-var line = document.querySelector(".line-svg");
-
-var point1 = document.querySelector("#l-p1");
-var point2 = document.querySelector("#r-p1");
-
-var x1 = point1.getBoundingClientRect().left + point1.offsetWidth / 2;
-var x2 = point2.getBoundingClientRect().left + point2.offsetWidth / 2;
-
-var y1 = point1.getBoundingClientRect().top + point1.offsetHeight / 2;
-var y2 = point2.getBoundingClientRect().top + point2.offsetHeight / 2;
-
-var draw = function () {
-  line.setAttribute("x1", x1);
-  line.setAttribute("x2", x2);
-  line.setAttribute("y1", y1);
-  line.setAttribute("y2", y2);
-};
-
-// var toggleActive = function (elem) {
-//   elem.addEventListener('click', function () {
-//     elem.classList.toggle('active');
-//     var att = elem.getAttribute('id');
-//     console.log(att);
-//   });
-// };
-
-// var zones = document.querySelectorAll('.zone');
-
-// for (var i = 0; i < zones.length; i += 1) {
-//   var zone = zones[i];
-//   toggleActive(zone);
-// }
 
 stringsController = {
   dataString: [
-    { id: 1, currentRight: "", corerctRight: "", isCorrecrt: false },
-    { id: 2, currentRight: "", corerctRight: "", isCorrecrt: false },
+    { id: 1, currentRight: "", correctRight: "", isCorrecrt: false },
+    { id: 2, currentRight: "", correctRight: "", isCorrecrt: false },
   ],
   activeElem: "",
   showData: function () {
@@ -89,46 +57,90 @@ stringsController = {
       if (string["id"] === numId) return string;
     }
   },
-  setLeftValue: function (id, value) {
-    var string = this.getString(id);
-    string["left"] = value;
-    return true;
-  },
-  clearLeftValue: function (id) {
-    var string = this.getString(id);
-    string["left"] = "";
-  },
   behaviorActiveLeftColumn: function (elem) {
     elem.addEventListener("click", function () {
       var isActive = elem.classList.contains("active");
-      var idAtt = elem.getAttribute("id");
-      // var id = idAtt.slice(1);
-      if (isActive) {
-        elem.classList.remove("active");
-        stringsController["activeElem"] = "";
-        stringsController.toggleDisRightColumn();
-        // stringsController.clearLeftValue(id);
+      var isChecked = elem.classList.contains("checked");
+      if (isActive || isChecked) {
+        stringsController.clearLeftActive(elem);
         stringsController.showData();
-        console.log(stringsController["activeElem"]);
         return true;
       }
-      stringsController.removeActiveClass();
-      elem.classList.add("active");
-      // stringsController.setLeftValue(id, idAtt);
-      stringsController["activeElem"] = idAtt;
-      stringsController.toggleDisRightColumn();
+      stringsController.setLeftActive(elem);
       stringsController.showData();
-      console.log(stringsController["activeElem"]);
     });
     return true;
+  },
+  clearLeftActive: function (elem) {
+    elem.classList.remove("active");
+    stringsController["activeElem"] = "";
+    stringsController.toggleDisRightColumn();
+    var idAtt = elem.getAttribute("id");
+    var id = idAtt.slice(1);
+    var string = this.getString(id);
+    this.clearCheked(string);
+    return true;
+  },
+  setLeftActive: function (elem) {
+    var idAtt = elem.getAttribute("id");
+    stringsController.removeActiveClass();
+    elem.classList.add("active");
+    stringsController["activeElem"] = idAtt;
+    stringsController.toggleDisRightColumn();
   },
   behaviorActiveRightColumn: function (elem) {
     elem.addEventListener("click", function () {
       var isDisable = elem.classList.contains("disable");
       if (isDisable) return false;
-      console.log("ok");
+      var rightId = elem.getAttribute("id");
+      var activeElem = stringsController["activeElem"];
+      var activeId = activeElem.slice(1);
+      var activeString = stringsController.getString(activeId);
+      var repeatElem = stringsController.checkRepeat(elem);
+      if (repeatElem) stringsController.clearCheked(repeatElem);
+      activeString["currentRight"] = rightId;
+      var currentLeftElem = document.querySelector("#" + activeElem);
+      stringsController.setChecked(currentLeftElem, elem);
+      stringsController.drawLine(currentLeftElem, elem);
+      stringsController.checkCorrect(activeString);
     });
     return true;
+  },
+  checkRepeat: function (elem) {
+    var rightId = elem.getAttribute("id");
+    var strings = this.dataString;
+    for (var i = 0; i < strings.length; i += 1) {
+      var string = strings[i];
+      if (string["currentRight"] === rightId) return string;
+    }
+    return false;
+  },
+  clearCheked: function (string) {
+    var lineId = 'line_'+ string["id"];
+    var svg = document.querySelector('svg');
+    var line = document.querySelector("#"+lineId);
+    svg.removeChild(line);
+    var leftId = "l" + string["id"];
+    var rightId = string["currentRight"];
+    var leftElem = document.querySelector("#" + leftId);
+    var rightElem = document.querySelector("#" + rightId);
+    leftElem.classList.remove("checked");
+    rightElem.classList.remove("checked");
+    string["currentRight"] = "";
+    string["isCorrecrt"] = false;
+  },
+  setChecked: function (leftElem, rightElem) {
+    this.removeActiveClass();
+    stringsController["activeElem"] = "";
+    this.toggleDisRightColumn();
+    leftElem.classList.add("checked");
+    rightElem.classList.add("checked");
+  },
+  checkCorrect: function (string) {
+    var current = string['currentRight'];
+    var correct = string['correctRight'];
+    var isCorrect = current === correct;
+    string['isCorrecrt'] = isCorrect;
   },
   toggleDisRightColumn: function () {
     var isActive = this.activeElem;
@@ -164,6 +176,28 @@ stringsController = {
     }
     return true;
   },
+  drawLine: function (leftElem, rightElem) {
+    var leftPoint = leftElem.querySelector(".point");
+    var rightPoint = rightElem.querySelector(".point");
+    var x1 = leftPoint.getBoundingClientRect().left + leftPoint.offsetWidth / 2;
+    var x2 =
+      rightPoint.getBoundingClientRect().left + rightPoint.offsetWidth / 2;
+    var y1 = leftPoint.getBoundingClientRect().top + leftPoint.offsetHeight / 2;
+    var y2 =
+      rightPoint.getBoundingClientRect().top + rightPoint.offsetHeight / 2;
+    var idAtt = leftElem.getAttribute("id");
+    var id = idAtt.slice(1);
+    var idLine = "line_" + id;
+    var line = document.querySelector(".line-svg");
+    var cloneLine = line.cloneNode(true);
+    cloneLine.setAttribute("x1", x1);
+    cloneLine.setAttribute("x2", x2);
+    cloneLine.setAttribute("y1", y1);
+    cloneLine.setAttribute("y2", y2);
+    cloneLine.setAttribute("id", idLine);
+    var svg = document.querySelector('svg');
+    svg.appendChild(cloneLine);
+  },
   shuffleRightColumn: function () {
     var rightColumn = document.querySelector(".right-column");
     var cloneNode = rightColumn.cloneNode(true);
@@ -178,7 +212,6 @@ stringsController = {
       tempArr[i] = tempArr[j];
       tempArr[j] = temp;
     }
-    console.log(tempArr);
     while (rightColumn.firstChild) {
       rightColumn.removeChild(rightColumn.firstChild);
     }
@@ -193,20 +226,28 @@ stringsController = {
       var elem = rightElems[i];
       var idElem = elem.getAttribute("id");
       var idNum = idElem.slice(1);
-      console.log(idNum);
       var string = this.getString(idNum);
       var futureId = "r" + (i + 1);
-      string["corerctRight"] = futureId;
+      string["correctRight"] = futureId;
     }
   },
   reWriteId: function () {
     var rightElems = document.querySelectorAll(".right-column .zone");
     for (var i = 0; i < rightElems.length; i += 1) {
       var elem = rightElems[i];
-      var id = 'r' + (i+1);
-      elem.setAttribute('id', id);
+      var point = elem.querySelector(".point");
+      var idPoint = "r_p" + (i + 1);
+      var id = "r" + (i + 1);
+      elem.setAttribute("id", id);
+      point.setAttribute("id", idPoint);
     }
+  },
+  init: function () {
+    this.shuffleRightColumn();
+    this.saveCorrectValue();
+    this.reWriteId();
+    this.setToggle();
   },
 };
 
-stringsController.setToggle();
+stringsController.init();
