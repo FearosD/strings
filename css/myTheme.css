@@ -9,6 +9,7 @@ body {
   font-size: 18px;
   font-family: Neucha-Regular;
   font-weight: 400;
+  color:#4F4F4F;
   background-color: transparent;
 }
 
@@ -17,29 +18,25 @@ svg {
   z-index: -1;
 }
 
-.cont {
-  outline: 1px solid tomato;
-  width: 800px;
-  padding: 20px 0px;
+.container{
+  width: 515px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
 .left-column,
 .right-column {
-  outline: 1px solid tomato;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  padding: 20px;
 }
 
 .zone {
-  width: 80px;
-  height: 80px;
-  margin: 10px 0px;
-  background: lightblue;
+  width: 200px;
+  height: 50px;
+  margin-top: 12px;
+  background: #F2F2F2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,9 +44,13 @@ svg {
   cursor: pointer;
 }
 
+.zone:first-child {
+  margin:0px;
+}
+
 .zone:hover,
 .active {
-  background: #85a9b5;
+  background: #E0E0E0;
 }
 
 .disable {
@@ -58,43 +59,59 @@ svg {
 }
 
 .zone.disable:hover {
-  background: lightblue;
+  background: #E0E0E0;
 }
 
 .checked {
-  background: #41a55f;
+  background: #E0E0E0;
 }
 
 .zone.disable.checked,
 .zone.disable.checked:hover {
-  background: #41a55f;
+  background: #E0E0E0;
   user-select: none;
   cursor: default;
 }
 
 .point {
-  height: 10px;
-  width: 10px;
+  height: 20px;
+  width: 20px;
+  box-sizing: border-box;
   border-radius: 50%;
-  background: black;
+  border: 3px solid #BDBDBD;
   position: absolute;
-  top: calc(50% - 5px);
+  top: calc(50% - 10px);
+}
+
+.zone.checked .point {
+  background: #828282;
+}
+
+.zone.checked .point::before {
+  content:'';
+  width: 16px;
+  height: 16px;
+  left:calc(50% - 8px);
+  top:calc(50% - 8px);
+  box-sizing: border-box;
+  border-radius: 50%;
+  border:2px solid white;
+  position: absolute;
 }
 
 .left-point {
-  right: -15px;
+  right: -30px;
 }
 
 .right-point {
-  left: -15px;
+  left: -30px;
 }
 
 /*-----------*/
 
 .buttons {
-  width: 800px;
+  width: 515px;
   box-sizing: border-box;
-  outline: 1px solid tomato;
   padding: 20px;
   display: flex;
   justify-content: space-around;
@@ -109,22 +126,22 @@ svg {
 
 .answer:hover,
 .reload:hover {
-  background: #85a9b5;
+  background: #E0E0E0;
 }
 
 .text {
-  width: 800px;
+  width: 515px;
   text-align: center;
   padding-top: 20px;
   font-size: 24px;
 }
 
 .bad {
-  background: #971212 !important;
+  background: #FBEFEF !important;
 }
 
 .good {
-  background: #164612 !important;
+  background: #E9FAE2 !important;
 }
 
 .close {
