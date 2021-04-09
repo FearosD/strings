@@ -41,6 +41,18 @@ function MimicPlayer() {
 var player = parent.GetPlayer ? parent.GetPlayer() : new MimicPlayer();
 
 stringsController = {
+  settingController: {
+    showCorrect: true,
+    sendArtVarCorrect: function () {
+      return 'passed';
+    },
+    sendArtVarFailed: function () {
+      return 'failed';
+    },
+    getArtVar: function () {
+      return 'questionString_1';
+    },
+  },
   dataString: [{ id: 1, currentRight: '', correctRight: '', isCorrect: false }],
   activeElem: '',
   startElem: {},
@@ -280,15 +292,20 @@ stringsController = {
   },
   checkCorrectQuestion: function () {
     var strings = this.dataString;
+    var correctText = this.settingController.sendArtVarCorrect();
+    var failedText = this.settingController.sendArtVarFailed();
+    var showCorrect = this.settingController['showCorrect'];
     var text = document.querySelector('.text');
     var mistake = 0;
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
       var isCorrect = string['isCorrect'];
-      this.markString(string, isCorrect);
+      if (showCorrect) this.markString(string, isCorrect);
       mistake = isCorrect ? (mistake += 0) : (mistake += 1);
     }
-    text.textContent = mistake === 0 ? 'Правильно!' : 'Неправильно!';
+    var result = mistake === 0 ? correctText : failedText;
+    text.textContent = result;
+    this.sendArticulateResult(result);
   },
   markString: function (string, mark) {
     var leftId = 'left_' + string['id'];
@@ -306,9 +323,12 @@ stringsController = {
     var container = document.querySelector('.container');
     var width = container.offsetWidth;
     var height = container.offsetHeight;
-    close.style.width = width+'px';
-    close.style.height = height+'px';
+    close.style.width = width + 'px';
+    close.style.height = height + 'px';
     close.style.display = 'block';
+  },
+  sendArticulateResult: function (value) {
+    player.SetVar(this.settingController.getArtVar(), value);
   },
   init: function () {
     this.initData();
