@@ -295,7 +295,7 @@ stringsController = {
     var correctText = this.settingController.sendArtVarCorrect();
     var failedText = this.settingController.sendArtVarFailed();
     var showCorrect = this.settingController['showCorrect'];
-    var text = document.querySelector('.text');
+//    var text = document.querySelector('.text');
     var mistake = 0;
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
@@ -304,7 +304,7 @@ stringsController = {
       mistake = isCorrect ? (mistake += 0) : (mistake += 1);
     }
     var result = mistake === 0 ? correctText : failedText;
-    text.textContent = result;
+//    text.textContent = result;
     this.sendArticulateResult(result);
   },
   markString: function (string, mark) {
