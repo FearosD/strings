@@ -325,6 +325,7 @@ stringsController = {
     var rightElems = document.querySelectorAll('.right-column .zone');
     for (var i = 0; i < rightElems.length; i += 1) {
       var rightElem = rightElems[i];
+      rightElem.classList.add('disable');
       this.behaviorActiveRightColumn(rightElem);
     }
     var close = document.querySelector('.close');

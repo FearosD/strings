@@ -9,7 +9,7 @@ body {
   font-size: 18px;
   font-family: Neucha-Regular;
   font-weight: 400;
-  color:#4F4F4F;
+  color: #4f4f4f;
   background-color: transparent;
 }
 
@@ -18,7 +18,7 @@ svg {
   z-index: -1;
 }
 
-.container{
+.container {
   width: 515px;
   display: flex;
   align-items: center;
@@ -36,7 +36,7 @@ svg {
   width: 200px;
   height: 50px;
   margin-top: 12px;
-  background: #F2F2F2;
+  background: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,12 +45,12 @@ svg {
 }
 
 .zone:first-child {
-  margin:0px;
+  margin: 0px;
 }
 
 .zone:hover,
 .active {
-  background: #E0E0E0;
+  background: #e0e0e0;
 }
 
 .disable {
@@ -59,16 +59,16 @@ svg {
 }
 
 .zone.disable:hover {
-  background: #E0E0E0;
+  background: #f2f2f2;
 }
 
 .checked {
-  background: #E0E0E0;
+  background: #e0e0e0;
 }
 
 .zone.disable.checked,
 .zone.disable.checked:hover {
-  background: #E0E0E0;
+  background: #e0e0e0;
   user-select: none;
   cursor: default;
 }
@@ -78,7 +78,7 @@ svg {
   width: 20px;
   box-sizing: border-box;
   border-radius: 50%;
-  border: 3px solid #BDBDBD;
+  border: 3px solid #bdbdbd;
   position: absolute;
   top: calc(50% - 10px);
 }
@@ -88,14 +88,14 @@ svg {
 }
 
 .zone.checked .point::before {
-  content:'';
+  content: '';
   width: 16px;
   height: 16px;
-  left:calc(50% - 8px);
-  top:calc(50% - 8px);
+  left: calc(50% - 8px);
+  top: calc(50% - 8px);
   box-sizing: border-box;
   border-radius: 50%;
-  border:2px solid white;
+  border: 2px solid white;
   position: absolute;
 }
 
@@ -126,7 +126,7 @@ svg {
 
 .answer:hover,
 .reload:hover {
-  background: #E0E0E0;
+  background: #e0e0e0;
 }
 
 .text {
@@ -137,11 +137,11 @@ svg {
 }
 
 .bad {
-  background: #FBEFEF !important;
+  background: #fbefef !important;
 }
 
 .good {
-  background: #E9FAE2 !important;
+  background: #e9fae2 !important;
 }
 
 .close {
