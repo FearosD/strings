@@ -86,11 +86,15 @@ svg {
   top: calc(50% - 10px);
 }
 
-.zone.checked .point {
+.zone.checked .point::before,
+.zone.active .point::before,
+.zone:hover .point::before {
   background: #828282;
 }
 
-.zone.checked .point::before {
+.zone.checked .point::before,
+.zone.active .point::before,
+.zone:hover .point::before {
   content: '';
   width: 16px;
   height: 16px;

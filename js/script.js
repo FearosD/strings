@@ -54,7 +54,8 @@ stringsController = {
     },
   },
   dataString: [{ id: 1, currentRight: '', correctRight: '', isCorrect: false }],
-  activeElem: '',
+  activeLeftElem: '',
+  activeRightElem: '',
   startElem: {},
   initData: function () {
     var leftElems = document.querySelectorAll('.left-column .zone');
@@ -85,121 +86,33 @@ stringsController = {
       if (string['id'] === numId) return string;
     }
   },
-  behaviorActiveLeftColumn: function (elem) {
-    elem.addEventListener('click', function () {
-      var isActive = elem.classList.contains('active');
-      var isChecked = elem.classList.contains('checked');
-      if (isActive || isChecked) {
-        stringsController.clearLeftActive(elem);
-        return true;
-      }
-      stringsController.setLeftActive(elem);
-    });
-    return true;
-  },
-  clearLeftActive: function (elem) {
-    elem.classList.remove('active');
-    stringsController['activeElem'] = '';
-    stringsController.toggleDisRightColumn();
-    var idAtt = elem.getAttribute('id');
-    var id = idAtt.slice(-1);
-    var string = this.getString(id);
-    this.clearCheked(string);
-    return true;
-  },
-  setLeftActive: function (elem) {
-    var idAtt = elem.getAttribute('id');
-    stringsController.removeActiveClass();
-    elem.classList.add('active');
-    stringsController['activeElem'] = idAtt;
-    stringsController.toggleDisRightColumn();
-  },
-  behaviorActiveRightColumn: function (elem) {
-    elem.addEventListener('click', function () {
-      var isDisable = elem.classList.contains('disable');
-      if (isDisable) return false;
-      var rightId = elem.getAttribute('id');
-      var activeElem = stringsController['activeElem'];
-      var activeId = activeElem.slice(-1);
-      var activeString = stringsController.getString(activeId);
-      var repeatElem = stringsController.checkRepeat(elem);
-      if (repeatElem) stringsController.clearCheked(repeatElem);
-      activeString['currentRight'] = rightId;
-      var currentLeftElem = document.querySelector('#' + activeElem);
-      stringsController.setChecked(currentLeftElem, elem);
-      stringsController.drawLine(currentLeftElem, elem);
-      stringsController.checkCorrect(activeString);
-    });
-    return true;
-  },
-  checkRepeat: function (elem) {
-    var rightId = elem.getAttribute('id');
+  getStringFromRightId: function (rightId) {
     var strings = this.dataString;
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
       if (string['currentRight'] === rightId) return string;
     }
-    return false;
   },
-  clearCheked: function (string) {
-    var lineId = 'line_' + string['id'];
-    var svg = document.querySelector('svg');
-    var line = document.querySelector('#' + lineId);
-    if (line) svg.removeChild(line);
-    var leftId = 'left_' + string['id'];
-    var rightId = string['currentRight'];
-    var leftElem = document.querySelector('#' + leftId);
-    var rightElem = document.querySelector('#' + rightId);
-    leftElem.classList.remove('checked');
-    rightElem.classList.remove('checked');
-    string['currentRight'] = '';
-    string['isCorrect'] = false;
-  },
-  setChecked: function (leftElem, rightElem) {
-    this.removeActiveClass();
-    stringsController['activeElem'] = '';
-    this.toggleDisRightColumn();
-    leftElem.classList.add('checked');
-    rightElem.classList.add('checked');
-  },
-  checkCorrect: function (string) {
-    var current = string['currentRight'];
-    var correct = string['correctRight'];
-    var isCorrect = current === correct;
-    string['isCorrect'] = isCorrect;
-  },
-  toggleDisRightColumn: function () {
-    var isActive = this.activeElem;
-    var rightElems = document.querySelectorAll('.right-column .zone');
-    for (var i = 0; i < rightElems.length; i += 1) {
-      var elem = rightElems[i];
-      if (isActive === '') {
-        elem.classList.add('disable');
-      } else {
-        elem.classList.remove('disable');
-      }
-    }
-    return true;
-  },
-  removeActiveClass: function () {
-    var elems = document.querySelectorAll('.left-column .zone');
+  removeActiveClass: function (childElem) {
+    var parent = childElem.parentElement;
+    var elems = parent.querySelectorAll('.zone');
     for (var i = 0; i < elems.length; i += 1) {
       var elem = elems[i];
       elem.classList.remove('active');
     }
     return true;
   },
-  setToggle: function () {
-    var leftElems = document.querySelectorAll('.left-column .zone');
-    for (var i = 0; i < leftElems.length; i += 1) {
-      var leftElem = leftElems[i];
-      this.behaviorActiveLeftColumn(leftElem);
+  setActive: function (elem) {
+    var idAtt = elem.getAttribute('id');
+    var isActive = elem.classList.contains('active');
+    stringsController.removeActiveClass(elem);
+    var position = idAtt.indexOf('left') + 1 ? 'Left' : 'Right';
+    if (isActive) {
+      stringsController['active' + position + 'Elem'] = '';
+      return false;
     }
-    var rightElems = document.querySelectorAll('.right-column .zone');
-    for (var i = 0; i < rightElems.length; i += 1) {
-      var rightElem = rightElems[i];
-      this.behaviorActiveRightColumn(rightElem);
-    }
+    elem.classList.add('active');
+    stringsController['active' + position + 'Elem'] = idAtt;
     return true;
   },
   drawLine: function (leftElem, rightElem) {
@@ -223,6 +136,80 @@ stringsController = {
     cloneLine.setAttribute('id', idLine);
     var svg = document.querySelector('svg');
     svg.appendChild(cloneLine);
+  },
+  setChecked: function () {
+    var leftActiveElemId = stringsController['activeLeftElem'];
+    var rightActiveElemId = stringsController['activeRightElem'];
+    var notActiveElems = leftActiveElemId === '' || rightActiveElemId === '';
+    if (notActiveElems) return false;
+    var leftElem = document.querySelector('#' + leftActiveElemId);
+    var rightElem = document.querySelector('#' + rightActiveElemId);
+    this.removeActiveClass(leftElem);
+    this.removeActiveClass(rightElem);
+    leftElem.classList.add('checked');
+    rightElem.classList.add('checked');
+    this.drawLine(leftElem, rightElem);
+    return true;
+  },
+  checkCorrect: function (string) {
+    var current = string['currentRight'];
+    var correct = string['correctRight'];
+    var isCorrect = current === correct;
+    string['isCorrect'] = isCorrect;
+  },
+  setActiveResult: function () {
+    var leftActiveElemId = stringsController['activeLeftElem'];
+    var rightActiveElemId = stringsController['activeRightElem'];
+    var notActiveElems = leftActiveElemId === '' || rightActiveElemId === '';
+    if (notActiveElems) return false;
+    var activeLeftId = leftActiveElemId.slice(-1);
+    var activeString = stringsController.getString(activeLeftId);
+    activeString['currentRight'] = rightActiveElemId;
+    stringsController.checkCorrect(activeString);
+    stringsController['activeLeftElem'] = '';
+    stringsController['activeRightElem'] = '';
+    return true;
+  },
+  clearCheked: function (childElem) {
+    var childId = childElem.getAttribute('id');
+    var childIdNum = childId.slice(-1);
+    var isLeft = childId.indexOf('left') + 1;
+    var string = isLeft
+      ? this.getString(childIdNum)
+      : this.getStringFromRightId(childId);
+    var lineId = 'line_' + string['id'];
+    var svg = document.querySelector('svg');
+    var line = document.querySelector('#' + lineId);
+    if (line) svg.removeChild(line);
+    var leftId = 'left_' + string['id'];
+    var rightId = string['currentRight'];
+    var leftElem = document.querySelector('#' + leftId);
+    var rightElem = document.querySelector('#' + rightId);
+    leftElem.classList.remove('checked');
+    rightElem.classList.remove('checked');
+    string['currentRight'] = '';
+    string['isCorrect'] = false;
+  },
+  behaviorActiveElemsColumn: function (elem) {
+    elem.addEventListener('click', function () {
+      var isChecked = elem.classList.contains('checked');
+      if (isChecked) {
+        stringsController.clearCheked(elem);
+        return true;
+      }
+      stringsController.setActive(elem);
+      stringsController.setChecked();
+      stringsController.setActiveResult();
+    });
+    return true;
+  },
+  setToggle: function () {
+    var elems = document.querySelectorAll('.zone');
+    for (var i = 0; i < elems.length; i += 1) {
+      var elem = elems[i];
+      this.behaviorActiveElemsColumn(elem);
+    }
+    return true;
   },
   shuffleRightColumn: function () {
     var rightColumn = document.querySelector('.right-column');
@@ -284,7 +271,6 @@ stringsController = {
       leftElem.classList.remove('bad');
       leftElem.classList.remove('good');
     }
-    this.toggleDisRightColumn();
     var svg = document.querySelector('svg');
     while (svg.childNodes.length > 2) {
       svg.removeChild(svg.lastChild);
@@ -295,7 +281,7 @@ stringsController = {
     var correctText = this.settingController.sendArtVarCorrect();
     var failedText = this.settingController.sendArtVarFailed();
     var showCorrect = this.settingController['showCorrect'];
-//    var text = document.querySelector('.text');
+    //    var text = document.querySelector('.text');
     var mistake = 0;
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
@@ -304,7 +290,7 @@ stringsController = {
       mistake = isCorrect ? (mistake += 0) : (mistake += 1);
     }
     var result = mistake === 0 ? correctText : failedText;
-//    text.textContent = result;
+    //    text.textContent = result;
     this.sendArticulateResult(result);
   },
   markString: function (string, mark) {
@@ -346,12 +332,12 @@ stringsController = {
     for (var i = 0; i < rightElems.length; i += 1) {
       var rightElem = rightElems[i];
       rightElem.classList.add('disable');
-      this.behaviorActiveRightColumn(rightElem);
+      this.behaviorActiveElemsColumn(rightElem);
     }
     var close = document.querySelector('.close');
     close.style.display = 'none';
-    var text = document.querySelector('.text');
-    text.textContent = 'Результат';
+    // var text = document.querySelector('.text');
+    // text.textContent = 'Результат';
   },
 };
 
