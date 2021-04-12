@@ -195,11 +195,13 @@ stringsController = {
       var isChecked = elem.classList.contains('checked');
       if (isChecked) {
         stringsController.clearCheked(elem);
+        stringsController.checkAnswers();
         return true;
       }
       stringsController.setActive(elem);
       stringsController.setChecked();
       stringsController.setActiveResult();
+      stringsController.checkAnswers();
     });
     return true;
   },
@@ -276,13 +278,25 @@ stringsController = {
       svg.removeChild(svg.lastChild);
     }
   },
-  checkCorrectQuestion: function () {
+  checkAnswers: function () {
     var strings = this.dataString;
+    var button = document.querySelector('.answer');
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
       var notAnswer = string['currentRight'] === '';
-      if (notAnswer) return false;
+      if (notAnswer) {
+        button.classList.add('disable');
+        return false;
+      }
     }
+    button.classList.remove('disable');
+    return true;
+  },
+  checkCorrectQuestion: function () {
+    var button = document.querySelector('.answer');
+    var isDisable = button.classList.contains('disable');
+    if (isDisable) return false;
+    var strings = this.dataString;
     var correctText = this.settingController.sendArtVarCorrect();
     var failedText = this.settingController.sendArtVarFailed();
     var showCorrect = this.settingController['showCorrect'];

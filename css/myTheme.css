@@ -130,6 +130,12 @@ svg {
   background: #fca700;
 }
 
+.disable, .answer.disable:hover{
+  background: #bdbdbd;
+  cursor: default;
+  user-select: none;
+}
+
 .text {
   width: 515px;
   text-align: center;
