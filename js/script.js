@@ -278,6 +278,11 @@ stringsController = {
   },
   checkCorrectQuestion: function () {
     var strings = this.dataString;
+    for (var i = 0; i < strings.length; i += 1) {
+      var string = strings[i];
+      var notAnswer = string['currentRight'] === '';
+      if (notAnswer) return false;
+    }
     var correctText = this.settingController.sendArtVarCorrect();
     var failedText = this.settingController.sendArtVarFailed();
     var showCorrect = this.settingController['showCorrect'];
