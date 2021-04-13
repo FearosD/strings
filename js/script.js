@@ -280,37 +280,38 @@ stringsController = {
   },
   checkAnswers: function () {
     var strings = this.dataString;
-    var button = document.querySelector('.answer');
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
       var notAnswer = string['currentRight'] === '';
       if (notAnswer) {
-        button.classList.add('disable');
+        var result = 'null'
+        this.sendArticulateResult(result);
         return false;
       }
     }
-    button.classList.remove('disable');
+    this.checkCorrectQuestion();
     return true;
   },
   checkCorrectQuestion: function () {
-    var button = document.querySelector('.answer');
-    var isDisable = button.classList.contains('disable');
-    if (isDisable) return false;
     var strings = this.dataString;
     var correctText = this.settingController.sendArtVarCorrect();
     var failedText = this.settingController.sendArtVarFailed();
-    var showCorrect = this.settingController['showCorrect'];
-    //    var text = document.querySelector('.text');
     var mistake = 0;
     for (var i = 0; i < strings.length; i += 1) {
       var string = strings[i];
       var isCorrect = string['isCorrect'];
-      if (showCorrect) this.markString(string, isCorrect);
       mistake = isCorrect ? (mistake += 0) : (mistake += 1);
     }
     var result = mistake === 0 ? correctText : failedText;
-    //    text.textContent = result;
     this.sendArticulateResult(result);
+  },
+  showCorrect: function () {
+    var strings = this.dataString;
+    for (var i = 0; i < strings.length; i += 1) {
+      var string = strings[i];
+      var isCorrect = string['isCorrect'];
+      this.markString(string, isCorrect);
+    }
   },
   markString: function (string, mark) {
     var leftId = 'left_' + string['id'];
@@ -355,8 +356,6 @@ stringsController = {
     }
     var close = document.querySelector('.close');
     close.style.display = 'none';
-    // var text = document.querySelector('.text');
-    // text.textContent = 'Результат';
   },
 };
 
